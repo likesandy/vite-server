@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client'
 import './App.css'
-import { FIND, HELLOGRAPHQL } from './graphql/demo'
+import { FIND } from './graphql/demo'
 
 function App() {
   // const { loading, error, data } = useQuery(HELLOGRAPHQL)
