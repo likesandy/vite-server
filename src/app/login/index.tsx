@@ -5,10 +5,12 @@ import { useMutation } from '@apollo/client'
 import { message, theme } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import styles from './index.module.less'
+import { TOKEN } from '@/utils/constants'
 
 interface ILogin {
   phone: string
   code: string
+  autoLogin: string
 }
 
 export default () => {
@@ -20,6 +22,12 @@ export default () => {
   const loginHandler = async (values: ILogin) => {
     const res = await login({ variables: values })
     if (res.data.login.code === 200) {
+      // 自动登录
+      if (values.autoLogin) {
+        const token = res.data.login.data
+        localStorage.setItem(TOKEN, token)
+      }
+
       message.success(res.data.login.message)
       nav('/')
       return
