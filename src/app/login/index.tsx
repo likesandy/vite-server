@@ -1,11 +1,12 @@
 import { LOGIN, SEND_CODE_MES } from '@/graphql/demo'
+import userStore from '@/store/user'
+import { TOKEN } from '@/utils/constants'
 import { LockOutlined, MobileOutlined } from '@ant-design/icons'
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-components'
 import { useMutation } from '@apollo/client'
-import { message, theme } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { message } from 'antd'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import styles from './index.module.less'
-import { TOKEN } from '@/utils/constants'
 
 interface ILogin {
   phone: string
@@ -14,29 +15,36 @@ interface ILogin {
 }
 
 export default () => {
-  const { token } = theme.useToken()
   const [send] = useMutation(SEND_CODE_MES)
   const [login] = useMutation(LOGIN)
+
+  const [params] = useSearchParams()
   const nav = useNavigate()
+
+  const refetchHandler = userStore((state: any) => state.userInfo.refetchHandler)
 
   const loginHandler = async (values: ILogin) => {
     const res = await login({ variables: values })
     if (res.data.login.code === 200) {
+      refetchHandler?.()
+      const token = res.data.login.data
+
       // 自动登录
       if (values.autoLogin) {
-        const token = res.data.login.data
         localStorage.setItem(TOKEN, token)
+      } else {
+        // 当前登录态
+        sessionStorage.setItem(TOKEN, token)
       }
-
       message.success(res.data.login.message)
-      nav('/')
+      nav(params.get('orgUrl') ?? '/')
       return
     }
     message.error(res.data.login.message)
   }
 
   return (
-    <div style={{ backgroundColor: token.colorBgContainer }} className={styles.container}>
+    <div className={styles.container}>
       <LoginForm
         logo="http://water-drop-assets.oss-cn-hangzhou.aliyuncs.com/images/henglogo.png"
         onFinish={loginHandler}

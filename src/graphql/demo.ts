@@ -33,3 +33,15 @@ export const LOGIN = gql`
   }
 `
 
+export const GET_USERINFO = gql`
+  query getUserInfo {
+    getUserInfo {
+      tel
+      name
+      desc
+      avatar
+      id
+    }
+  }
+`
+

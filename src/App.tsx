@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client'
 import './App.css'
 import { FIND } from './graphql/demo'
 
-function App() {
+function Index() {
   // const { loading, error, data } = useQuery(HELLOGRAPHQL)
   const [findUser, { loading, error, data }] = useMutation(FIND)
 

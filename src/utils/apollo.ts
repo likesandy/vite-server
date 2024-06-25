@@ -8,7 +8,7 @@ const httpLink = createHttpLink({
 
 // 拦截器
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem(TOKEN)
+  const token = sessionStorage.getItem(TOKEN) || localStorage.getItem(TOKEN)
   return {
     headers: {
       ...headers,
